@@ -25,6 +25,8 @@ from rest_framework.response import Response
 
 # --------------------------- models ----------------------------------------------
 from nps.models import *
+from user_auth.models import *
+from google_reviews.models import *
 
 #----------------------------- helper ---------------------------------------------
 from nps.helper import *

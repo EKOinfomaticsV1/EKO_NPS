@@ -1,6 +1,7 @@
 import re  
 from datetime import datetime
 from nps.models import *
+from user_auth.models import *
 
 # email validation
 def validate_email(email):  

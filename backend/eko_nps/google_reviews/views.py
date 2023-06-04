@@ -241,10 +241,13 @@ def all_comments(request):
      token verification
     """
     user_id = 3
-    gr_obj = google_reviews.objects.filter(user_id = user_id).values('name','review','rating','date','sentiment').order_by('-date')
-    gr_obj = pd.DataFrame(gr_obj)
-    gr_obj['date'] = gr_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))
-    gr_obj = gr_obj.to_dict(orient='records')
+    gr_obj = google_reviews.objects.filter(user_id = user_id).values('id','name','review','rating','date','sentiment').order_by('-date')
+    if len(gr_obj)>0:
+        gr_obj = pd.DataFrame(gr_obj)
+        gr_obj['date'] = gr_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))
+        gr_obj = gr_obj.to_dict(orient='records')
+    else:
+        gr_obj = []
     return Response(gr_obj)
 
 @api_view(['POST'])
@@ -254,10 +257,13 @@ def all_alerts(request):
      token verification
     """
     user_id = 3
-    gr_obj = google_reviews.objects.filter(user_id = user_id,sentiment='Extreme').values('name','review','rating','date','sentiment').order_by('-date')
-    gr_obj = pd.DataFrame(gr_obj)
-    gr_obj['date'] = gr_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))
-    gr_obj = gr_obj.to_dict(orient='records')
+    gr_obj = google_reviews.objects.filter(user_id = user_id,sentiment='Extreme').values('id','name','review','rating','date','sentiment').order_by('-date')
+    if len(gr_obj)>0:
+        gr_obj = pd.DataFrame(gr_obj)
+        gr_obj['date'] = gr_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))
+        gr_obj = gr_obj.to_dict(orient='records')
+    else:
+        gr_obj = []
     return Response(gr_obj)
 
 @api_view(['POST'])
@@ -304,7 +310,7 @@ def nss_over_time(request):
                                                                   )
     gr_obj = pd.DataFrame(gr_obj)
     gr_obj['SURVEY_MONTH'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%Y'))
-    gr_obj['month'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b'))
+    gr_obj['month'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%y'))
     gr_obj = gr_obj.to_dict(orient='records')
     res = {
             'status':True,

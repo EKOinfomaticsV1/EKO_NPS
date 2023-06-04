@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 from PIL import Image
 import time
- 
+from threading import Thread
 
 
 #-------------------------Django Modules---------------------------------------------

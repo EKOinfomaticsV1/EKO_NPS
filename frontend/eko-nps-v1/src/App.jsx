@@ -7,6 +7,9 @@ import NSSCard from './components/individual-components/NSSCard'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import ReviewsTablePage from './pages/ReviewsTablePage'
 import ProtectedRoute from './components/global-components/ProtectedRoute'
+import DashboardNewTwo from './pages/DashboardNewTwo'
+import NPSSentimentsTablePage from './pages/NPSSentimentsTablePage'
+import NPSCommentsTablePage from './pages/NPSCommentsTablePage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,23 +20,22 @@ function App() {
     <div className='font-poppins'>
       {
         location?.pathname?.includes('/login') ?
-          ''
+          null
           :
           <Sidebar />
       }
       <div className={`${location?.pathname?.includes('/login') ? '' : 'pl-[200px]'}`}>
-        {/* <LoginPage /> */}
-        {/* <Dashboard /> */}
         <Routes >
           <Route path='/login' element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path='/' element={<DashboardNew />} />
             <Route path='/sentiments' element={<Dashboard />} />
             <Route path='/comments' element={<ReviewsTablePage />} />
+            <Route path='/nps-dashboard' element={<DashboardNewTwo />} />
+            <Route path='/nps-sentiments' element={<NPSSentimentsTablePage />} />
+            <Route path='/nps-comments' element={<NPSCommentsTablePage />} />
           </Route>
         </Routes>
-        {/*  */}
-        {/* <NSSCard/> */}
       </div>
     </div>
   )

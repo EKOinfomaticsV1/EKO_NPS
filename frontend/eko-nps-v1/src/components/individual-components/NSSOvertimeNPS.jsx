@@ -25,7 +25,7 @@ import { exportComponentAsPNG } from "react-component-export-image";
 import axios from "axios";
 import { VITE_BASE_LINK } from "../../../baseLink";
 
-const NSSOverTime = () => {
+const NSSOvertimeNPS = () => {
   const [apiData, setApiData] = useState();
 
   const [nssOverTimeAPIData, setNssOverTimeAPIData] = useRecoilState(
@@ -33,7 +33,7 @@ const NSSOverTime = () => {
   );
 
   useEffect(() => {
-    axios.post(VITE_BASE_LINK + 'google/nss_over_time').then((response) => {
+    axios.post(VITE_BASE_LINK + 'nps/nss_over_time').then((response) => {
         // console.log(response?.data);
         setApiData(response?.data?.data)
     })
@@ -120,7 +120,7 @@ const NSSOverTime = () => {
   );
 };
 
-export default NSSOverTime;
+export default NSSOvertimeNPS;
 
 function CustomTooltip({ active, payload, label }) {
   if (active) {

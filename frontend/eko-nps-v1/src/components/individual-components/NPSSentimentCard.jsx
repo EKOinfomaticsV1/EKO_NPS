@@ -16,7 +16,7 @@ import nssData from '../../helpers/nssMockApi.json'
 import axios from "axios";
 import { VITE_BASE_LINK } from "../../../baseLink";
 
-const NSSCard = () => {
+const NPSSentimentCard = () => {
 
 
   const [nssApiData, setNssApiData] = useRecoilState(nssAPIdata);
@@ -27,7 +27,7 @@ const NSSCard = () => {
   useEffect(() => {
     // setApiData(nssData?.data);
     
-    axios.post(VITE_BASE_LINK + 'google/netSentimentCard').then((response) => {
+    axios.post(VITE_BASE_LINK + 'nps/netSentimentCard').then((response) => {
         console.log(response?.data);
         setApiData(response?.data?.data)
     })
@@ -239,7 +239,7 @@ const NSSCard = () => {
   );
 };
 
-export default NSSCard;
+export default NPSSentimentCard;
 
 function CustomTooltip({ active, payload, label }) {
   const [nssApiData, setNssApiData] = useRecoilState(nssAPIdata);

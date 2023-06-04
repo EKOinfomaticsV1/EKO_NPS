@@ -4,7 +4,7 @@ import NSSAllCard from '../components/individual-components/NSSAllCard'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import SecondaryHeader from '../components/global-components/SecondaryHeader';
 
-const Dashboard = () => {
+const NPSSentimentsTablePage = () => {
   return (
     <div>
     <SecondaryHeader />
@@ -18,4 +18,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default NPSSentimentsTablePage

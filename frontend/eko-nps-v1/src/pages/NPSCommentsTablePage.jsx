@@ -26,11 +26,12 @@ import SecondaryHeader from '../components/global-components/SecondaryHeader';
 import PuffLoader from "react-spinners/PuffLoader";
 import DoubleArrowRoundedIcon from "@mui/icons-material/DoubleArrowRounded";
 
-const ReviewsTablePage = () => {
+const NPSCommentsTablePage = () => {
 
     const [reviewsData, setReviewsData] = useState();
 
     const [alertData, setAlertData] = useState();
+
 
     const [expandComment, setExpandComment] = useState("");
 
@@ -61,12 +62,12 @@ const ReviewsTablePage = () => {
 
     useEffect(() => {
 
-        axios.post(VITE_BASE_LINK + 'google/all_comments').then((response) => {
+        axios.post(VITE_BASE_LINK + 'nps/all_comments').then((response) => {
             // console.log(response?.data);
             setReviewsData(response?.data)
         })
 
-        axios.post(VITE_BASE_LINK + 'google/all_alerts').then((response) => {
+        axios.post(VITE_BASE_LINK + 'nps/all_alerts').then((response) => {
             // console.log(response?.data);
             setAlertData(response?.data)
         })
@@ -87,9 +88,8 @@ const ReviewsTablePage = () => {
                     </div>
 
                     {/* table heading */}
-                    <div className='w-[98%] mx-auto grid grid-cols-[80px_150px_auto_150px_150px] border-b pb-2'>
+                    <div className='w-[98%] mx-auto grid grid-cols-[120px_auto_150px_150px] border-b pb-2'>
                         <h1 className='text-xs text-gray-600 font-[500]'>Date</h1>
-                        <h1 className='text-xs text-gray-600 font-[500]'>Name</h1>
                         <h1 className='text-xs text-gray-600 font-[500]'>Review</h1>
                         <h1 className='text-xs text-gray-600 font-[500]'>Rating</h1>
                         <h1 className='text-xs text-gray-600 font-[500]'>Sentiment</h1>
@@ -106,26 +106,25 @@ const ReviewsTablePage = () => {
                                         reviewsData?.map((data, i) => {
                                             return (
                                                 i <= totalViewedComments && (
-                                                    <div key={i} className='w-full grid grid-cols-[80px_150px_auto_150px_150px] py-4 border-b'>
+                                                    <div key={i} className='w-full grid grid-cols-[120px_auto_150px_150px] py-4 border-b'>
                                                         <h1 className='text-xs'>{data?.date}</h1>
-                                                        <h1 className='text-xs'>{data?.name}</h1>
-                                                        {/* <h1 className='text-xs xl:pr-6'>{data?.review}</h1> */}
-                                                        <h1 className='text-xs xl:pr-6'>
-                                                            <div className=" ">
-                                                                <div
-                                                                    className="w-full"
-                                                                    onClick={() => {
-                                                                        setExpandComment(data.id);
-                                                                        setClickCount(!clickCount);
-                                                                    }}
-                                                                >
-                                                                    {expandComment == data?.id && clickCount
-                                                                        ? data?.review
-                                                                        : truncate(data?.review, 100)}
+                                                        <h1 className='text-xs xl:pr-6'>{data?.review}</h1>
+                                                        {/* <h1 className='text-xs border'>
+                                                                <div className=" ">
+                                                                    <div
+                                                                        className="w-full"
+                                                                        onClick={() => {
+                                                                            setExpandComment(data.id);
+                                                                            setClickCount(!clickCount);
+                                                                        }}
+                                                                    >
+                                                                        {expandComment == data?.id && clickCount
+                                                                            ? data?.review
+                                                                            : truncate(data?.review, 100)}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </h1>
-                                                        <h1 className='text-xs pl-5'>{data?.rating}</h1>
+                                                            </h1> */}
+                                                        <h1 className='text-xs pl-2'>{data?.nps_type}</h1>
                                                         <h1 className='text-xs pl-5'>{
                                                             data?.sentiment === 'Positive' ?
                                                                 <img src={PositiveIcon} alt="Positive" className="w-[20px]" />
@@ -176,11 +175,10 @@ const ReviewsTablePage = () => {
                     </div>
 
                     {/* table heading */}
-                    <div className='w-[98%] mx-auto grid grid-cols-[80px_150px_auto_150px_150px] border-b pb-2'>
+                    <div className='w-[98%] mx-auto grid grid-cols-[120px_auto_150px_150px] border-b pb-2'>
                         <h1 className='text-xs text-gray-600 font-[500]'>Date</h1>
-                        <h1 className='text-xs text-gray-600 font-[500]'>Name</h1>
                         <h1 className='text-xs text-gray-600 font-[500]'>Review</h1>
-                        <h1 className='text-xs text-gray-600 font-[500]'>Rating</h1>
+                        <h1 className='text-xs text-gray-600 font-[500]'>NPS Type</h1>
                         <h1 className='text-xs text-gray-600 font-[500]'>Sentiment</h1>
                     </div>
 
@@ -189,11 +187,10 @@ const ReviewsTablePage = () => {
                     <div className='w-full px-4 max-h-[300px] overflow-y-scroll'>
                         {
                             alertData?.map((data, i) => (
-                                <div key={i} className='w-full grid grid-cols-[80px_150px_auto_150px_150px] py-4 border-b'>
+                                <div key={i} className='w-full grid grid-cols-[120px_auto_150px_150px] py-4 border-b'>
                                     <h1 className='text-xs'>{data?.date}</h1>
-                                    <h1 className='text-xs'>{data?.name}</h1>
                                     <h1 className='text-xs pr-6'>{data?.review}</h1>
-                                    <h1 className='text-xs pl-5'>{data?.rating}</h1>
+                                    <h1 className='text-xs pl-2'>{data?.nps_type}</h1>
                                     <h1 className='text-xs pl-5'>{
                                         data?.sentiment === 'Positive' ?
                                             <img src={PositiveIcon} alt="Positive" className="w-[20px]" />
@@ -219,4 +216,4 @@ const ReviewsTablePage = () => {
     )
 }
 
-export default ReviewsTablePage
+export default NPSCommentsTablePage

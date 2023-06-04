@@ -107,7 +107,7 @@ const NPSAllGraph = () => {
     >
       {!apiData && (
         <div className="min-h-[130px] bg-[#ffffff] z-[200] rounded-lg flex justify-center items-center">
-          <PuffLoader color="#00ac69" size={50} width={100} />
+          <PuffLoader color="#0284c7" size={50} width={100} />
         </div>
       )}
 

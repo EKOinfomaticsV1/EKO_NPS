@@ -13,4 +13,5 @@ urlpatterns = [
 
 
     path('test_api',test_api),
+    path('delete_records',delete_records),
 ]

@@ -130,7 +130,6 @@ def file_upload(request):
                 'message':'Expected dateformat for date column is YYYY-mm-dd but got different in some cases'
               }
         return Response(res)
-    # nps_data.objects.all().delete()
     Thread(target=file_upload_process, args=(user_id,df,)).start()
     res = {'status':True,
            'message':'File uploaded successfully'}
@@ -413,6 +412,27 @@ def nss_over_time(request):
 def test_api(request):
     x = 'Hello'
     # Thread(target=test_func, args=('hello','world',)).start()
-    file_uploading_status.objects.all().delete()
+    # file_uploading_status.objects.all().delete()
     return Response('done')
     
+
+@api_view(['POST'])
+def delete_records(request):
+    user_id = 3
+    try:
+        f = file_uploading_status.objects.get(user_id = user_id)
+        res = {
+                'status':False,
+                'status_code':226,
+                'title':'IM Used',
+                'message':f"Previous file already being processed. Please wait"
+              }
+        return Response(res)
+    except:
+        pass
+    nps_data.objects.filter(uploading_status = True).delete()
+    res = {
+            'status':True,
+            'message':'Records deleted sucessfully'
+    }
+    return Response(res)

@@ -4,6 +4,8 @@ from nps.models import *
 from user_auth.models import *
 import pandas as pd
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer as sia
+from textblob import TextBlob
+
 
 # email validation
 def validate_email(email):  
@@ -60,29 +62,48 @@ def test_func(x,y):
         print(f"{x} {y} {i}")
     return i
 
-def sentiment_scores(x):
-    sentence = str(x['review'])
-    nps = x['nps']
-    sid_obj = sia()
-    sentiment_dict = sid_obj.polarity_scores(sentence)
-    pos = sentiment_dict['pos']*100
-    neg = sentiment_dict['neg']*100
-    neu = sentiment_dict['neu']*100
+# def sentiment_scores(x):
+#     sentence = str(x['review'])
+#     nps = x['nps']
+#     sid_obj = sia()
+#     sentiment_dict = sid_obj.polarity_scores(sentence)
+#     pos = sentiment_dict['pos']*100
+#     neg = sentiment_dict['neg']*100
+#     neu = sentiment_dict['neu']*100
 
-    if pos > neg:
-        max = pos
+#     if pos > neg:
+#         max = pos
+#         sentiment = 'Positive'
+#     else:
+#         max = neg
+#         sentiment = 'Negative'
+#     if max < neu:
+#         max = neu
+#         sentiment = 'Neutral'         
+
+#     if sentiment == 'Negative' and eval(str(nps)) <3:
+#         sentiment = 'Extreme'
+#     if sentence == '':
+#         sentiment = 'Neutral'
+#     return sentiment
+
+def sentiment_scores(df):
+    sentence = str(df['review'])
+    nps = df['nps']
+    sentiment = TextBlob(sentence)
+    polarity = sentiment.polarity
+    if polarity >= 0.05 :
         sentiment = 'Positive'
-    else:
-        max = neg
+    elif polarity <= - 0.05 :
         sentiment = 'Negative'
-    if max < neu:
-        max = neu
-        sentiment = 'Neutral'         
-
-    if sentiment == 'Negative' and eval(str(nps)) <3:
-        sentiment = 'Extreme'
-    if sentence == '':
+    else :
         sentiment = 'Neutral'
+    if sentiment == 'Negative' and nps >4:
+        sentiment = 'Neutral'
+    if sentiment == 'Negative' and nps < 3 :
+        sentiment = 'Extreme'
+    if sentiment == 'Negative' and nps >8:
+        sentiment = 'Positive'
     return sentiment
 
 def file_upload_process(user_id,df):
@@ -112,7 +133,8 @@ def file_upload_process(user_id,df):
                     review = review,
                     nps = nps,
                     date = date,
-                    sentiment = sentiment
+                    sentiment = sentiment,
+                    uploading_status = True
                 )
         n.save()
     print('##############################')

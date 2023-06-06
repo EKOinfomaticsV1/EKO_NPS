@@ -241,7 +241,7 @@ def all_comments(request):
      token verification
     """
     user_id = 3
-    gr_obj = google_reviews.objects.filter(user_id = user_id).values('id','name','review','rating','date','sentiment').order_by('-date')
+    gr_obj = google_reviews.objects.filter(user_id = user_id).exclude(review = "").values('id','name','review','rating','date','sentiment').order_by('-date')
     if len(gr_obj)>0:
         gr_obj = pd.DataFrame(gr_obj)
         gr_obj['date'] = gr_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))
@@ -257,7 +257,7 @@ def all_alerts(request):
      token verification
     """
     user_id = 3
-    gr_obj = google_reviews.objects.filter(user_id = user_id,sentiment='Extreme').values('id','name','review','rating','date','sentiment').order_by('-date')
+    gr_obj = google_reviews.objects.filter(user_id = user_id,sentiment='Extreme').exclude(review = "").values('id','name','review','rating','date','sentiment').order_by('-date')
     if len(gr_obj)>0:
         gr_obj = pd.DataFrame(gr_obj)
         gr_obj['date'] = gr_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))

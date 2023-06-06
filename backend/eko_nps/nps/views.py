@@ -323,7 +323,7 @@ def all_comments(request):
      token verification
     """
     user_id = 3
-    nd_obj = nps_data.objects.filter(user_id = user_id).values('id','review','nps','date','sentiment').order_by('-date')
+    nd_obj = nps_data.objects.filter(user_id = user_id).exclude(review = "").values('id','review','nps','date','sentiment').order_by('-date')
     if len(nd_obj)>0:
         nd_obj = pd.DataFrame(nd_obj)
         nd_obj['date'] = nd_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))
@@ -331,7 +331,7 @@ def all_comments(request):
         nd_obj = nd_obj.to_dict(orient='records')
     else:
         nd_obj = []    
-    return Response(nd_obj)
+    return Response(nd_obj[:1000])
 
 @api_view(['POST'])
 def all_alerts(request):
@@ -340,7 +340,7 @@ def all_alerts(request):
      token verification
     """
     user_id = 3
-    nd_obj = nps_data.objects.filter(user_id = user_id,sentiment='Extreme').values('id','review','nps','date','sentiment').order_by('-date')
+    nd_obj = nps_data.objects.filter(user_id = user_id,sentiment='Extreme').exclude(review = "").values('id','review','nps','date','sentiment').order_by('-date')
     if len(nd_obj)>0:
         nd_obj = pd.DataFrame(nd_obj)
         nd_obj['date'] = nd_obj['date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b %Y'))

@@ -10,6 +10,8 @@ urlpatterns = [
     path('all_comments',all_comments),
     path('all_alerts',all_alerts),
     path('nss_over_time',nss_over_time),
+    path('nps_over_time',nps_over_time),
+    path('nps_vs_sentiment',nps_vs_sentiment),
 
 
     path('test_api',test_api),

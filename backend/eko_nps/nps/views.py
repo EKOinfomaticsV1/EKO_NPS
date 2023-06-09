@@ -408,6 +408,187 @@ def nss_over_time(request):
           }                                                
     return Response(res)
 
+
+@api_view(['POST'])
+def nps_over_time(request):
+    data = request.data
+    data = request.data
+    """
+     token verification
+    """
+    user_id = 3
+    nd_obj = nps_data.objects.order_by('-date').values('date__year', 'date__month')\
+                                               .annotate(
+                                                    count = Count('pk'),
+                                                    year = F('date__year'),
+                                                    survey_date = F('date'),
+                                                    promoter = twoDecimal((Cast(Sum(Case(
+                                                                When(nps__range=[9,10],then=1),
+                                                                default=0,
+                                                                output_field=IntegerField()
+                                                                )),FloatField()))),\
+                                                    passive =  twoDecimal((Cast(Sum(Case(
+                                                                When(nps__range=[7,8],then=1),
+                                                                default=0,
+                                                                output_field=IntegerField()
+                                                                )),FloatField()))),\
+                                                    detractor = twoDecimal((Cast(Sum(Case(
+                                                                When(nps__range=[0,6],then=1),
+                                                                default=0,
+                                                                output_field=IntegerField()
+                                                                )),FloatField()))),\
+                                                    nps_abs = twoDecimal(
+                                                        ((F('promoter')-F('detractor'))/(F('promoter')+F('passive')+F('detractor')))*100),
+                                                    NPS = Case(
+                                                            When(
+                                                                nps_abs__lt = 0,
+                                                                then = 0    
+                                                                ),
+                                                                default=F('nps_abs'),
+                                                                output_field=FloatField()
+                                                              )
+                                                )
+    nd_obj = pd.DataFrame(nd_obj)
+    nd_obj['SURVEY_MONTH'] = nd_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%Y'))
+    nd_obj['month'] = nd_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%y'))
+    nd_obj = nd_obj.to_dict(orient='records')
+    res = {
+            'status':True,
+            'status_code':200,
+            'title':'OK',
+            'message':'Data for nps overtime',
+            'data':{
+                    'nss_over_time':nd_obj
+                    }
+          }                                                
+    return Response(res)
+
+
+@api_view(['POST'])
+def nps_vs_sentiment(request):
+    data = request.data
+    """
+     token verification
+    """
+    user_id = 3
+    nd_obj = nps_data.objects.filter(user_id = user_id).values()
+    positive = nd_obj.values('sentiment').filter(sentiment = 'Positive')\
+                                .annotate(
+                                            promoter = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[9,10],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            passive =  twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[7,8],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            detractor = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[0,6],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100)
+                                        ).order_by('sentiment')
+    
+    negative = nd_obj.values('sentiment').filter(sentiment = 'Negative')\
+                                .annotate(
+                                            promoter = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[9,10],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            passive =  twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[7,8],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            detractor = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[0,6],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100)
+                                        ).order_by('sentiment')
+    
+    neutral = nd_obj.values('sentiment').filter(sentiment = 'Neutral')\
+                                .annotate(
+                                            promoter = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[9,10],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            passive =  twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[7,8],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            detractor = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[0,6],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100)
+                                        ).order_by('sentiment')
+    
+    extreme = nd_obj.values('sentiment').filter(sentiment = 'Extreme')\
+                                .annotate(
+                                            promoter = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[9,10],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            passive =  twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[7,8],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100),
+                                            detractor = twoDecimal((Cast(Sum(Case(
+                                                        When(nps__range=[0,6],then=1),
+                                                        default=0,
+                                                        output_field=IntegerField()
+                                                        )),FloatField())/Cast(Count('pk'),FloatField()))*100)
+                                        ).order_by('sentiment')
+    
+    if(len(list(positive)) == 0):
+        positive = [{
+                        "sentiment_label": "Positive",
+                        "promoter": 0,
+                        "passive": 0,
+                        "detractor": 0
+                    }]
+    if(len(list(negative)) == 0):
+        negative = [{
+                        "sentiment_label": "negative",
+                        "promoter": 0,
+                        "passive": 0,
+                        "detractor": 0
+                    }]
+    if(len(list(neutral)) == 0):
+        neutral = [{
+                        "sentiment_label": "neutral",
+                        "promoter": 0,
+                        "passive": 0,
+                        "detractor": 0
+                    }]
+    if(len(list(extreme)) == 0):
+        extreme = [{
+                        "sentiment_label": "Extreme",
+                        "promoter": 0,
+                        "passive": 0,
+                        "detractor": 0
+                    }]
+    final_data = list(positive)+list(negative)+list(neutral)+list(extreme)
+    res = {
+            'status':True,
+            'status_code':200,
+            'title':'OK',
+            'message':'Data for nps Vs sentiment',
+            'data':{
+                    'nps_vs_sentiment':final_data
+                    }
+          }                                                
+    return Response(res)
+
+
 @api_view(['POST'])
 def test_api(request):
     x = 'Hello'

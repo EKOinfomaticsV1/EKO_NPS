@@ -273,7 +273,7 @@ def nss_over_time(request):
      token verification
     """
     user_id = 3
-    gr_obj = google_reviews.objects.order_by('-date').values('date__year', 'date__month')\
+    gr_obj = google_reviews.objects.filter(user_id = user_id).order_by('-date').values('date__year', 'date__month')\
                                                      .annotate(
                                                                 count=Count('pk'),
                                                                 year = F('date__year'),
@@ -316,7 +316,7 @@ def nss_over_time(request):
             'status':True,
             'status_code':200,
             'title':'OK',
-            'message':'Data for net cards',
+            'message':'Data for nss overtime',
             'data':{
                     'nss_over_time':gr_obj
                     }
@@ -324,7 +324,34 @@ def nss_over_time(request):
     return Response(res)
 
 
-
+@api_view(['POST'])
+def rating_over_time(request):
+    data = request.data
+    """
+     token verification
+    """
+    user_id = 3
+    gr_obj = google_reviews.objects.filter(user_id = user_id).order_by('-date').values('date__year', 'date__month')\
+                                                     .annotate(
+                                                                count=Count('pk'),
+                                                                year = F('date__year'),
+                                                                survey_date = F('date'),
+                                                                avg_rating = twoDecimal(Avg('rating'))
+                                                                  )
+    gr_obj = pd.DataFrame(gr_obj)
+    gr_obj['SURVEY_MONTH'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%Y'))
+    gr_obj['month'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%y'))
+    gr_obj = gr_obj.to_dict(orient='records')
+    res = {
+            'status':True,
+            'status_code':200,
+            'title':'OK',
+            'message':'Data for rating overtime',
+            'data':{
+                    'rating_over_time':gr_obj
+                    }
+          }      
+    return Response(res)      
 
 
 

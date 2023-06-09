@@ -9,6 +9,7 @@ urlpatterns = [
     path('all_comments',all_comments),
     path('all_alerts',all_alerts),
     path('nss_over_time',nss_over_time),
+    path('rating_over_time',rating_over_time),
 
     # path('store_data',store_data),
 ]

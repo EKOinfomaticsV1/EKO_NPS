@@ -331,7 +331,7 @@ def all_comments(request):
         nd_obj = nd_obj.to_dict(orient='records')
     else:
         nd_obj = []    
-    return Response(nd_obj[:1000])
+    return Response(nd_obj)
 
 @api_view(['POST'])
 def all_alerts(request):
@@ -438,8 +438,8 @@ def nps_over_time(request):
                                                                 output_field=IntegerField()
                                                                 )),FloatField()))),\
                                                     nps_abs = twoDecimal(
-                                                        ((F('promoter')-F('detractor'))/(F('promoter')+F('passive')+F('detractor')))*100),
-                                                    NPS = Case(
+                                                        ((F('promoter')-F('detractor'))/(F('promoter')+F('passive')+F('detractor')))*10),
+                                                    nps = Case(
                                                             When(
                                                                 nps_abs__lt = 0,
                                                                 then = 0    
@@ -458,7 +458,7 @@ def nps_over_time(request):
             'title':'OK',
             'message':'Data for nps overtime',
             'data':{
-                    'nss_over_time':nd_obj
+                    'nps_over_time':nd_obj
                     }
           }                                                
     return Response(res)

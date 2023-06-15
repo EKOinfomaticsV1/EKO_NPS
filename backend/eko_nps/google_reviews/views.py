@@ -336,7 +336,8 @@ def rating_over_time(request):
                                                                 count=Count('pk'),
                                                                 year = F('date__year'),
                                                                 survey_date = F('date'),
-                                                                avg_rating = twoDecimal(Avg('rating'))
+                                                                avg_rating = twoDecimal(Avg('rating')),
+                                                                
                                                                   )
     gr_obj = pd.DataFrame(gr_obj)
     gr_obj['SURVEY_MONTH'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%Y'))
@@ -354,8 +355,63 @@ def rating_over_time(request):
     return Response(res)      
 
 
-
-
+@api_view(['POST'])
+def rating_sentiment_over_time(request):
+    data = request.data
+    """
+     token verification
+    """
+    user_id = 3
+    gr_obj = google_reviews.objects.filter(user_id = user_id).order_by('-date').values('date__year', 'date__month')\
+                                                     .annotate(
+                                                                count=Count('pk'),
+                                                                year = F('date__year'),
+                                                                survey_date = F('date'),
+                                                                avg_rating = twoDecimal(Avg('rating')),
+                                                                positive = twoDecimal((Cast(Sum(Case(
+                                                                            When(sentiment='Positive',then=1),
+                                                                            default=0,
+                                                                            output_field=IntegerField()
+                                                                            )),FloatField()))),#/Cast(Count('id'),FloatField()))*100),\
+                                                                negative = twoDecimal((Cast(Sum(Case(
+                                                                            When(sentiment='Negative',then=1),
+                                                                            default=0,
+                                                                            output_field=IntegerField()
+                                                                            )),FloatField()))),
+                                                                neutral = twoDecimal((Cast(Sum(Case(
+                                                                            When(sentiment='Neutral',then=1),
+                                                                            default=0,
+                                                                            output_field=IntegerField()
+                                                                            )),FloatField()))),
+                                                                extreme = twoDecimal((Cast(Sum(Case(
+                                                                            When(sentiment='Extreme',then=1),
+                                                                            default=0,
+                                                                            output_field=IntegerField()
+                                                                            )),FloatField()))),
+                                                                nss_abs = twoDecimal((F('positive')-F('negative')-F('extreme'))/Cast(Count('id'),FloatField())*100),
+                                                                nss = Case(
+                                                                            When(
+                                                                                nss_abs__lt = 0,
+                                                                                then = 0    
+                                                                                ),
+                                                                                default=F('nss_abs'),
+                                                                                output_field=FloatField()
+                                                                            )                                                                
+                                                                  )
+    gr_obj = pd.DataFrame(gr_obj)
+    gr_obj['SURVEY_MONTH'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%Y'))
+    gr_obj['month'] = gr_obj['survey_date'].apply(lambda x : datetime.strptime(str(x)[:10],'%Y-%m-%d').strftime('%b-%y'))
+    gr_obj = gr_obj.to_dict(orient='records')
+    res = {
+            'status':True,
+            'status_code':200,
+            'title':'OK',
+            'message':'Data for rating overtime',
+            'data':{
+                    'rating_over_time':gr_obj
+                    }
+          }      
+    return Response(res)
 
 
 

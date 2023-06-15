@@ -617,3 +617,4 @@ def delete_records(request):
             'message':'Records deleted sucessfully'
     }
     return Response(res)
+

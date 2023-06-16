@@ -106,7 +106,7 @@ def sentiment_scores(df):
         sentiment = 'Positive'
     return sentiment
 
-def file_upload_process(user_id,df):
+def file_upload_process(user_id,df,file,file_size):
     df.fillna('',inplace=True)
     print('##############################')
     print("Sentiment process started")
@@ -141,6 +141,12 @@ def file_upload_process(user_id,df):
     print("Completed")
     file_uploading_status.objects.filter(user_id = user_id).delete()
     print('##############################')   
+    log_obj = upload_log(
+                            user_id = user_id,
+                            file_name = file,
+                            file_size = f'{file_size} kb' if file_size < 1000 else f'{round(file_size/1000,2)} mb'
+                        )
+    log_obj.save()
 
 def nps_type(x):
     if x < 7:

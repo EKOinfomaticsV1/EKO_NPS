@@ -130,7 +130,7 @@ def file_upload(request):
                 'message':'Expected dateformat for date column is YYYY-mm-dd but got different in some cases'
               }
         return Response(res)
-    Thread(target=file_upload_process, args=(user_id,df,)).start()
+    Thread(target=file_upload_process, args=(user_id,df,file.name,file_size,)).start()
     res = {'status':True,
            'message':'File uploaded successfully'}
     return Response(res)
@@ -590,14 +590,6 @@ def nps_vs_sentiment(request):
 
 
 @api_view(['POST'])
-def test_api(request):
-    x = 'Hello'
-    # Thread(target=test_func, args=('hello','world',)).start()
-    # file_uploading_status.objects.all().delete()
-    return Response('done')
-    
-
-@api_view(['POST'])
 def delete_records(request):
     user_id = 3
     try:
@@ -618,3 +610,19 @@ def delete_records(request):
     }
     return Response(res)
 
+
+@api_view(['POST'])
+def upload_file_log(request):
+    user_id = 3
+    u = upload_log.objects.filter(user_id = user_id).values()
+    u = pd.DataFrame(u)
+    u['date'] = u['date_time'].apply(lambda x : str(x)[:10])
+    u['time'] = u['date_time'].apply(lambda x : str(x)[11:19])
+    u = u.to_dict(orient='records')
+    return Response(u)
+
+
+@api_view(['POST'])
+def test_api(request):
+    u = upload_log.objects.values()
+    return Response(u)

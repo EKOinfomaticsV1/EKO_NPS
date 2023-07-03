@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('nps/',include('nps.urls')),
     path('google/',include('google_reviews.urls')),
-    path('auth/',include('user_auth.urls'))
+    path('auth/',include('user_auth.urls')),
+    path('ms/',include('manual_survey.urls')),
 ]

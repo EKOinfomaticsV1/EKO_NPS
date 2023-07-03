@@ -27,6 +27,8 @@ from rest_framework.response import Response
 from nps.models import *
 from user_auth.models import *
 from google_reviews.models import *
+from manual_survey.models import *
 
 #----------------------------- helper ---------------------------------------------
 from nps.helper import *
+from manual_survey.email import *

@@ -126,7 +126,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #-----------------------------------------------------------------------------------------
 import os
 ALLOWED_HOSTS = ALLOWED_HOSTS + ['*']
-INSTALLED_APPS = INSTALLED_APPS + ['nps','google_reviews','user_auth']
+INSTALLED_APPS = INSTALLED_APPS + ['nps','google_reviews','user_auth','manual_survey']
 INSTALLED_APPS = INSTALLED_APPS + ['rest_framework','corsheaders',]
 MIDDLEWARE = MIDDLEWARE + ['corsheaders.middleware.CorsMiddleware',]
 

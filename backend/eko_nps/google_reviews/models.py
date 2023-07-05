@@ -14,3 +14,6 @@ class google_reviews(models.Model):
     rating = models.IntegerField()
     date = models.DateTimeField()
     sentiment = models.CharField(max_length=50)
+
+class current_user(models.Model):
+    user_id = models.IntegerField()

@@ -329,7 +329,7 @@ def survey_analytics(request):
             survey_df[nps_question_name] = survey_df[nps_question_name].replace([''], 5)
             responses = survey_df.shape[0]
             promoters = len(survey_df.loc[survey_df[nps_question_name]>8])
-            passive =  len(survey_df.loc[(survey_df[nps_question_name]>6) & (survey_df[nps_question_name]<8) ])
+            passive =  len(survey_df.loc[(survey_df[nps_question_name]>6) & (survey_df[nps_question_name]<9) ])
             detractors =  len(survey_df.loc[(survey_df[nps_question_name]<7)])
             nps_score = promoters/responses*100 - detractors/responses*100
             nps_score = 0 if nps_score < 0 else round(nps_score,2)

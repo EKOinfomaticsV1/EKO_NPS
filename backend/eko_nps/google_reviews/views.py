@@ -12,9 +12,19 @@ class Round(Func):
     function = 'ROUND'
     template='%(function)s(%(expressions)s, 0)'
 
-
-
 # Create your views here.
+
+# 1 -> ccd
+# 2 -> starbucks
+# 3 -> jayadeva
+# user_id = current_user.objects.values().last()['user_id']
+
+@api_view(['GET'])
+def uid_mani(request):
+    data = request.data
+    user_id = int(data['user_id'])
+    current_user.objects.values().update(user_id = user_id)
+    return Response(user_id)
 
 @api_view(['POST'])
 def add_url(request):
@@ -67,7 +77,8 @@ def get_rating(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id).values().order_by('-date')
     total = gr_obj.count()
     avg_rating = round(sum(gr_obj.values_list('rating',flat=True))/total,2)
@@ -128,7 +139,8 @@ def netSentimentCard(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id).values().order_by('-date')
     total = gr_obj.count()
     sentiment_positive = gr_obj.filter(sentiment='Positive').count()
@@ -205,7 +217,8 @@ def net_cards(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id).values().order_by('-date')
     surveyed = gr_obj.count()
     comments = gr_obj.exclude(review = '').count()
@@ -240,7 +253,8 @@ def all_comments(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id).exclude(review = "").values('id','name','review','rating','date','sentiment').order_by('-date')
     if len(gr_obj)>0:
         gr_obj = pd.DataFrame(gr_obj)
@@ -256,7 +270,8 @@ def all_alerts(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id,sentiment='Extreme').exclude(review = "").values('id','name','review','rating','date','sentiment').order_by('-date')
     if len(gr_obj)>0:
         gr_obj = pd.DataFrame(gr_obj)
@@ -272,7 +287,8 @@ def nss_over_time(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id).order_by('-date').values('date__year', 'date__month')\
                                                      .annotate(
                                                                 count=Count('pk'),
@@ -330,7 +346,8 @@ def rating_over_time(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id).order_by('-date').values('date__year', 'date__month')\
                                                      .annotate(
                                                                 count=Count('pk'),
@@ -361,7 +378,8 @@ def rating_sentiment_over_time(request):
     """
      token verification
     """
-    user_id = 3
+    # user_id = 3
+    user_id = current_user.objects.values().last()['user_id']
     gr_obj = google_reviews.objects.filter(user_id = user_id).order_by('-date').values('date__year', 'date__month')\
                                                      .annotate(
                                                                 count=Count('pk'),
@@ -413,34 +431,14 @@ def rating_sentiment_over_time(request):
           }      
     return Response(res)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @api_view(['POST'])
 def store_data(request):
-    google_reviews.objects.all().delete()
+    # google_reviews.objects.filter(user_id=1).delete()
     data = request.data
-    user_id = 3
-    df = pd.read_csv('Jayadeva_Hospital.csv')
+    user_id = 1
+    df = pd.read_csv('final_ccd.csv')
+    df.fillna('',inplace=True)
+    df['rating'] = df['rating'].apply(lambda x : eval(x.split(' ')[1]))
     # return Response(df.shape[0])
     for i in range(df.shape[0]):
         name = df['name'][i]
@@ -458,6 +456,12 @@ def store_data(request):
                                     sentiment = sentiment,
                                 )
         gr_obj.save()
+        # print(name)
+        # print(review)
+        # print(rating)
+        # print(date)
+        # print(sentiment)
+        # break
         print(i)
     return Response('done')
         

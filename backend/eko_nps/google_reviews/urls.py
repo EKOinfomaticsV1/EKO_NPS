@@ -12,5 +12,6 @@ urlpatterns = [
     path('rating_over_time',rating_over_time),
     path('rating_sentiment_over_time',rating_sentiment_over_time),
 
+    path('uid_mani',uid_mani),
     # path('store_data',store_data),
 ]
